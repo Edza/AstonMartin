@@ -22,6 +22,7 @@ namespace AstonMartin
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
     public partial class MainWindow : Window
     {
         const string ADDR = "http://www.worldweatheronline.com/Riga-weather/Riga/LV.aspx";
@@ -29,6 +30,16 @@ namespace AstonMartin
         public MainWindow()
         {
             InitializeComponent();
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(GlobalErrorHandler);
+        }
+
+        static private void GlobalErrorHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            MessageBox.Show("Wohoho! " + ex.Message + Environment.NewLine +
+                            ex.InnerException + Environment.NewLine + ex.StackTrace);
         }
 
         private BackgroundWorker bw = new BackgroundWorker();
