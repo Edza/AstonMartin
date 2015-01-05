@@ -44,7 +44,7 @@ namespace AstonMartin
 
         private BackgroundWorker bw = new BackgroundWorker();
 
-        Timer visualTimer = new Timer(600);
+        Timer visualTimer = new Timer(100);
 
         string temperature = "ielādēju...";
         DateTime lastTempLoaded = DateTime.Now.AddSeconds(-60);
@@ -74,7 +74,11 @@ namespace AstonMartin
             visualTimer.Stop();
             this.Dispatcher.Invoke((Action)(() =>
             {
-                tb.Text = DateTime.Now.ToString() + Environment.NewLine + "               " + temperature;
+                tb.Inlines.Clear();
+                tb.Inlines.Add(new Run(DateTime.Now.ToShortDateString() + " "));
+                tb.Inlines.Add(new Run(DateTime.Now.ToShortTimeString()) { Foreground = Brushes.GreenYellow, FontSize = 90 });
+                tb.Inlines.Add(new Run(":" + DateTime.Now.ToString("ss")));
+                tb.Inlines.Add(new Run(Environment.NewLine + "               " + temperature));
 
                 if (DateTime.Now - lastTempLoaded > new TimeSpan(0, 0, 40))
                 {
