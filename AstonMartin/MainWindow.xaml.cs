@@ -83,7 +83,10 @@ namespace AstonMartin
                 if (DateTime.Now - lastTempLoaded > new TimeSpan(0, 0, 40))
                 {
                     lastTempLoaded = DateTime.Now;
-                    bw.RunWorkerAsync();
+                    if (bw.IsBusy)
+                        bw.CancelAsync();
+                    else
+                        bw.RunWorkerAsync();
                 }
             }));
             visualTimer.Start();
