@@ -111,7 +111,7 @@ namespace AstonMartin
                         " " + extraInfo[ExtraWeatherInfo.Pressure]
                         )
                     {
-                        Foreground = Brushes.Gray,
+                        Foreground = Brushes.LightBlue,
                         FontSize = 50
                     });
                 }
@@ -191,9 +191,26 @@ namespace AstonMartin
             windSpeed = MphtoMs(windSpeed);
 
             windSpeed = windSpeed.Replace("mph from the", "m/s");
-            char lastChar = windSpeed[windSpeed.Length - 1];
-            string fixedStr = Compass[lastChar];
-            windSpeed = windSpeed.Replace(lastChar.ToString(), fixedStr);
+            
+            int pos = windSpeed.Length - 1;
+            string postfix = "";
+            int count = 0;
+            do
+            {
+                char lastChar = windSpeed[pos];
+                string fixedStr = Compass[lastChar];
+                
+                postfix = fixedStr + " " + postfix;
+
+                pos--;
+                count++;
+            } while (Compass.Keys.Contains(windSpeed[pos]));
+
+            if(count > 1)
+                postfix = postfix.ReplaceFirstOccurrance(" ", ", ");
+
+            windSpeed = windSpeed.Remove(pos + 1, windSpeed.Length - pos - 1);
+            windSpeed += postfix;
 
             return windSpeed;
         }
@@ -219,5 +236,21 @@ namespace AstonMartin
             return temper;
         }
 
+    }
+
+    public static class MyExtensions
+    {
+
+        public static string ReplaceFirstOccurrance(this string original, string oldValue, string newValue)
+        {
+            if (String.IsNullOrEmpty(original))
+                return String.Empty;
+            if (String.IsNullOrEmpty(oldValue))
+                return original;
+            if (String.IsNullOrEmpty(newValue))
+                newValue = String.Empty;
+            int loc = original.IndexOf(oldValue);
+            return original.Remove(loc, oldValue.Length).Insert(loc, newValue);
+        }
     }
 }
