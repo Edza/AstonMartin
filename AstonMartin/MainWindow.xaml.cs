@@ -95,7 +95,7 @@ namespace AstonMartin
                 {
                     FontSize = 60
                 });
-                tb.Inlines.Add(new Run(DateTime.Now.ToShortTimeString())
+                tb.Inlines.Add(new Run(" " + DateTime.Now.ToShortTimeString())
                 {
                     Foreground = Brushes.GreenYellow,
                     FontSize = 90
@@ -218,7 +218,6 @@ namespace AstonMartin
             }
             return temper;
         }
-
 
     }
 }
