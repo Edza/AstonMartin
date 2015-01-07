@@ -4,19 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Web;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AstonMartin
 {
@@ -26,9 +18,9 @@ namespace AstonMartin
 
     public partial class MainWindow : Window
     {
-        const string ADDR = "http://www.worldweatheronline.com/Riga-weather/Riga/LV.aspx";
+        private const string ADDR = "http://www.worldweatheronline.com/Riga-weather/Riga/LV.aspx";
 
-        readonly Dictionary<char,string> Compass = new Dictionary<char,string>() {
+        private readonly Dictionary<char, string> Compass = new Dictionary<char, string>() {
                 {'N', "ziemeļu"},
                 {'S', "dienvidu"},
                 {'W', "rietumu"},
@@ -52,11 +44,11 @@ namespace AstonMartin
 
         private BackgroundWorker bw = new BackgroundWorker();
 
-        Timer visualTimer = new Timer(100);
+        private Timer visualTimer = new Timer(100);
 
-        string temperature = "ielādēju...";
-        Dictionary<ExtraWeatherInfo, string> extraInfo;
-        DateTime lastTempLoaded = DateTime.Now.AddSeconds(-60);
+        private string temperature = "ielādēju...";
+        private Dictionary<ExtraWeatherInfo, string> extraInfo;
+        private DateTime lastTempLoaded = DateTime.Now.AddSeconds(-60);
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -77,7 +69,7 @@ namespace AstonMartin
 
         private void bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            Dictionary<ExtraWeatherInfo,string> dict;
+            Dictionary<ExtraWeatherInfo, string> dict;
             string temper = GetWeather(out dict);
             e.Result = new { temper, dict };
         }
@@ -141,21 +133,21 @@ namespace AstonMartin
                 temper = ExtractTemperature(doc);
                 extraInfo = ExtractExtraInfo(doc);
             }
-            catch
+            catch(Exception e)
             {
-                temper = "neizdevās!";
+                temper = e.Message + Environment.NewLine + e.InnerException;
                 extraInfo = null;
             }
 
             return temper;
         }
 
-        enum ExtraWeatherInfo { WindSpeed = 0, Humidity = 1, Pressure = 2}
+        private enum ExtraWeatherInfo { WindSpeed = 0, Humidity = 1, Pressure = 2 }
 
         private Dictionary<ExtraWeatherInfo, string> ExtractExtraInfo(HtmlDocument doc)
         {
             HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//*[contains(@class, 'outlook_right')]");
-            
+
             string windSpeed = "", humidity = "", pressure = "";
             int count = 0;
 
@@ -168,9 +160,11 @@ namespace AstonMartin
                     case (int)ExtraWeatherInfo.WindSpeed:
                         windSpeed = ParseWindspeed(item);
                         break;
+
                     case (int)ExtraWeatherInfo.Humidity:
                         humidity = item;
                         break;
+
                     case (int)ExtraWeatherInfo.Pressure:
                         pressure = item;
                         break;
@@ -192,7 +186,7 @@ namespace AstonMartin
             windSpeed = MphtoMs(windSpeed);
 
             windSpeed = windSpeed.Replace("mph from the", "m/s");
-            
+
             int pos = windSpeed.Length - 1;
             string postfix = "";
             int count = 0;
@@ -200,14 +194,14 @@ namespace AstonMartin
             {
                 char lastChar = windSpeed[pos];
                 string fixedStr = Compass[lastChar];
-                
+
                 postfix = fixedStr + " " + postfix;
 
                 pos--;
                 count++;
             } while (Compass.Keys.Contains(windSpeed[pos]));
 
-            if(count > 1)
+            if (count > 1)
                 postfix = postfix.ReplaceFirstOccurrance(" ", ", ");
 
             windSpeed = windSpeed.Remove(pos + 1, windSpeed.Length - pos - 1);
@@ -223,7 +217,7 @@ namespace AstonMartin
             double windSpeedMs = Math.Round(0.44704 * windSpeedMph, 1);
             windSpeed = windSpeed.Remove(0, windSpeedMph.ToString().Length);
             return windSpeedMs + windSpeed;
-        }      
+        }
 
         private static string ExtractTemperature(HtmlAgilityPack.HtmlDocument doc)
         {
@@ -236,12 +230,10 @@ namespace AstonMartin
             }
             return temper;
         }
-
     }
 
     public static class MyExtensions
     {
-
         public static string ReplaceFirstOccurrance(this string original, string oldValue, string newValue)
         {
             if (String.IsNullOrEmpty(original))
