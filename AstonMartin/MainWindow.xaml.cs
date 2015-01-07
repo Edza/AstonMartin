@@ -62,6 +62,7 @@ namespace AstonMartin
         {
             visualTimer.Elapsed += visualTimer_Elapsed;
             visualTimer.Start();
+            bw.WorkerSupportsCancellation = true;
 
             bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
