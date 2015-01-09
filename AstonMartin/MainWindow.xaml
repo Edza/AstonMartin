@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="798" Width="1465" Loaded="Window_Loaded"
         WindowStyle="None" ResizeMode="NoResize"  
-    WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        >
     
     <Grid Background="Black">
         <TextBlock HorizontalAlignment="Center" Foreground="White" VerticalAlignment="Center" x:Name="tb" Text="Ielādējos..." FontSize="72"/>

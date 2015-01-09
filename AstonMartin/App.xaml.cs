@@ -13,5 +13,9 @@ namespace AstonMartin
     /// </summary>
     public partial class App : Application
     {
+        private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
     }
 }
